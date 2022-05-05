@@ -8,7 +8,8 @@ A small LL1 analyser that can calculate the first and follow of a given producti
 - terminals and non-terminals should be one character at most
 - epsilon are represented by the character '&'
 ### install
-``` gcc LL1.c -o LL1
+``` 
+gcc LL1.c -o LL1 
 ./LL1
 ``` 
 

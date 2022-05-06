@@ -21,7 +21,9 @@ E->E+T|T
 T->T\*F|F
 
 F->(E)|d
+
 .
+
 when u finish typing your prodution rules you need to type '.' then press enter
 
 ![capt](https://user-images.githubusercontent.com/59932913/167090016-2d3569d5-cf66-44b5-9325-1bc709091db1.PNG)

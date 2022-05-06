@@ -15,8 +15,11 @@ gcc LL1.c -o LL1
 ### exemple
 #### remove recursion ,calculate first and follow
 after running you can type the following production rules as an exemple :
+
 E->E+T|T
+
 T->T\*F|F
+
 F->(E)|d
 .
 when u finish typing your prodution rules you need to type '.' then press enter

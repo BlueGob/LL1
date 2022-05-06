@@ -7,7 +7,7 @@ A small LL1 analyser that can remove recusrsion, calculate the first and follow 
 - non-terminals must be upper case
 - terminals and non-terminals should be one character at most
 - epsilon are represented by the character '&'
-### install
+### install and run
 ``` 
 gcc LL1.c -o LL1 
 ./LL1

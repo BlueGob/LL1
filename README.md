@@ -43,5 +43,5 @@ as we can see it tell's as that this word is accepted !.
 
 
 
-
+sorry for the one file code 😕
 

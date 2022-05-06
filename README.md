@@ -41,7 +41,7 @@ for exemple the word ~~(5+5)*5~~  will not be accepted despite it is correct ins
 
 ![cap](https://user-images.githubusercontent.com/59932913/167091717-4eb2ddb1-b2fe-4194-a76b-bbb9b2fd1317.PNG)
 
-as we can see it tell's as that this word is accepted !.
+as we can see it tell's us that this word is accepted !.
 
 
 

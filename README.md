@@ -1,5 +1,5 @@
-# compilation
-## LL1 analyser with C
+#  Descent Parser
+## LL1 parser with C
 A small LL1 analyser that can remove recusrsion, calculate the first and follow of a given production rules then you can enter a word to analyse it.
 ## how to use
 ### syntax

@@ -655,11 +655,11 @@ void main(){
 		int verify = checkIfvalid(table_LL1,text,prod_with_no_rec);
 		switch (verify){
 			case 1:
-				printf("\033[0;32m le mot %s est accepté \n",text);
+				printf("\033[0;32m le mot %s est acceptÃ© \n",text);
 				printf("\033[0;37m");
 				break;
 			case 0:
-				printf("\033[0;31m le mot %s n'est pas accepté  \n",text);
+				printf("\033[0;31m le mot %s n'est pas acceptÃ©  \n",text);
 				printf("\033[0;37m");
 				break;
 		}

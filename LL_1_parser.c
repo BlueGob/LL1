@@ -14,13 +14,13 @@ typedef struct LL1 LL1;
 struct rules{
 	char name[3];
 	char production[10][10];
-	char suivant[10];
-	char premier[10];
-	int premier_count;
-	int suivant_count;
+	char follow[10];
+	char first[10];
+	int first_count;
+	int follow_count;
 	int count;
-	int premier_calculer;
-	int suivant_calculer;
+	int first_calculer;
+	int follow_calculer;
 	struct rules * next;
 };
 typedef struct rules rules;
@@ -35,12 +35,12 @@ typedef struct stack stack;
 void insert(rules ** p,rules * temp){
 	if( *p == NULL){
 		temp->next = NULL;
-		temp->premier_count = 0;
-		temp->suivant_count = 0;
-		temp->premier_calculer = 0;
-		temp->suivant_calculer =0;
-		temp->premier[0] = '\0';
-		temp->suivant[0] = '\0';
+		temp->first_count = 0;
+		temp->follow_count = 0;
+		temp->first_calculer = 0;
+		temp->follow_calculer =0;
+		temp->first[0] = '\0';
+		temp->follow[0] = '\0';
 		*p = temp;
 
 	}else{
@@ -49,12 +49,12 @@ void insert(rules ** p,rules * temp){
 			x =x->next;
 		}
 		x->next = temp;
-		temp->premier_count = 0;
-		temp->premier_calculer = 0;
-		temp->suivant_calculer =0;
-		temp->suivant_count = 0;
-		temp->premier[0] = '\0';
-		temp->suivant[0] = '\0';
+		temp->first_count = 0;
+		temp->first_calculer = 0;
+		temp->follow_calculer =0;
+		temp->follow_count = 0;
+		temp->first[0] = '\0';
+		temp->follow[0] = '\0';
 		temp->next = NULL;
 
 	}
@@ -100,8 +100,8 @@ void saisie(rules ** p){
 	k=0;
 	if( *p == NULL){
 		temp->next = NULL;
-		temp->premier_calculer =0;
-		temp->suivant_calculer = 0;
+		temp->first_calculer =0;
+		temp->follow_calculer = 0;
 		*p = temp;
 
 	}else{
@@ -110,8 +110,8 @@ void saisie(rules ** p){
 			x =x->next;
 		}
 		x->next = temp;
-		temp->premier_calculer =0;
-		temp->suivant_calculer = 0;
+		temp->first_calculer =0;
+		temp->follow_calculer = 0;
 		temp->next = NULL;
 
 	}
@@ -139,6 +139,27 @@ int checkForRecursion(rules * p){
 			}
 		}
 	return 0;
+}
+char *removeDuplicated(char table[]){
+	char * temp;
+	int k  =0;
+	temp = malloc(strlen(table));
+	for (int i = 0; i < strlen(table); ++i)
+	{
+		int exist = 0;
+		for (int j = i+1; j < strlen(table); ++j)
+		{
+				if(table[i] == table[j]){
+					exist = 1;
+				}
+		}
+		if(exist == 0){
+			temp[k] = table[i];
+			++k;
+		}
+	}
+	temp[k] = '\0';
+	return temp;
 }
 rules * removeRecursion (rules * p){
 	rules * no_rec = NULL;
@@ -194,40 +215,40 @@ rules * lookForRule(rules * p,char name){
 	printf("la regle %c est non existant",name);
 	exit(0);
 }
-int checkForEpsilon(char premier[]){
-	for (int i = 0; i < strlen(premier); ++i)
+int checkForEpsilon(char first[]){
+	for (int i = 0; i < strlen(first); ++i)
 	{
-		if(premier[i] == '&'){
+		if(first[i] == '&'){
 			return 1;
 
 		}
 	}
 	return 0;
 }
-char * removeEpsilon(char * premier){
+char * removeEpsilon(char * first){
 	int l = 0;
-	for (int i = 0; i < strlen(premier); ++i)
+	for (int i = 0; i < strlen(first); ++i)
 	{
-		if(premier[i] == '&'){
+		if(first[i] == '&'){
 			l++;
 		}
 	}
-	char * temp = malloc(strlen(premier));
+	char * temp = malloc(strlen(first));
 	l=0;
-	for (int i = 0; i < strlen(premier); ++i)
+	for (int i = 0; i < strlen(first); ++i)
 	{
-		if(premier[i] != '&'){
-			temp[l] = premier[i];
+		if(first[i] != '&'){
+			temp[l] = first[i];
 			l++;
 		}
 	}
     temp[l] = '\0';
 	return temp;
 }
-int checkIfExist(char premier[],char pr){
+int checkIfExist(char first[],char pr){
 	int i =0;
-	while(i<strlen(premier)){
-		if(premier[i] == pr){
+	while(i<strlen(first)){
+		if(first[i] == pr){
 			return 1;
 		}
 		i++;
@@ -250,50 +271,49 @@ int checkIfNameExist(char production[],char name[]){
 	}
 	return 0;
 }
-rules * premierForOneRule(rules * p,rules * p2){
+rules * firstForOneRule(rules * p,rules * p2){
 
 
-	if(p->premier_calculer == 0){
+	if(p->first_calculer == 0){
 		int k =0;
 		int max = p->count;
 		for (int i = 0; i < max; ++i)
 		{
-			int l =1;
-			if (isupper(p->production[i][0])){
-				rules * x = lookForRule(p2,p->production[i][0]);
-				rules * temp = premierForOneRule(x,p2);
-                strcat(p->premier,temp->premier);
-				while(checkForEpsilon(temp->premier) && isupper(p->production[i][l]) && l<strlen(p->production[i])){
-					strcpy(p->premier,removeEpsilon(p->premier));
+			int l =0;
+			if (isupper(p->production[i][l])){
+				rules * x = lookForRule(p2,p->production[i][l]);
+				rules * temp = firstForOneRule(x,p2);
+                strcat(p->first,temp->first);
+                while(checkForEpsilon(temp->first) && isupper(p->production[i][l+1])){
+                	l++;
 					rules * y = lookForRule(p2,p->production[i][l]);
-					l++;
-					rules * temp2 = premierForOneRule(y,p2);
-					strcat(p->premier,temp2->premier);
-					p->premier_count = strlen(p->premier);
-					k = strlen(p->premier);
-				}
+					rules * temp2 = firstForOneRule(y,p2);
+					strcat(p->first,temp2->first);	
+                }
+                  strcpy(p->first,removeEpsilon(p->first));
+                  strcpy(p->first,removeDuplicated(p->first));
 
 			}else{
 
-					if(!checkIfExist(p->premier,p->production[i][0])){
+					if(!checkIfExist(p->first,p->production[i][0])){
 
-						p->premier[k] = p->production[i][0];
+						p->first[k] = p->production[i][0];
 						++k;
-						p->premier[k] = '\0';
+						p->first[k] = '\0';
 				}
 			}
 
 		}
-		p->premier_count = strlen(p->premier);
-		p->premier_calculer =1;
+		p->first_count = strlen(p->first);
+		p->first_calculer =1;
 		return p;
 	}
 	return p;
 }
-rules * premier(rules * p ){
+rules * first(rules * p ){
 	rules * iterator = p;
 	while(iterator!=NULL){
-		iterator = premierForOneRule(iterator,p);
+		iterator = firstForOneRule(iterator,p);
 		iterator = iterator->next;
 	}
 	return p;
@@ -306,16 +326,16 @@ rules * nameToRule(rules * p ,char * name){
 		p = p->next;
 	}
 }
-void printPremier(rules * p){
+void printfirst(rules * p){
 	while(p !=NULL){
 
-		printf("Premier(%s) = {",p->name);
-		for (int i = 0; i < p->premier_count; ++i)
+		printf("first(%s) = {",p->name);
+		for (int i = 0; i < p->first_count; ++i)
 		{
-			if(i == p->premier_count - 1){
-				printf("%c",p->premier[i]);
+			if(i == p->first_count - 1){
+				printf("%c",p->first[i]);
 			}else{
-				printf("%c,",p->premier[i]);
+				printf("%c,",p->first[i]);
 			}
 
 		}
@@ -323,31 +343,11 @@ void printPremier(rules * p){
 		p = p->next;
 	}
 }
-char *removeDuplicated(char table[]){
-	char * temp;
-	int k  =0;
-	temp = malloc(strlen(table));
-	for (int i = 0; i < strlen(table); ++i)
-	{
-		int exist = 0;
-		for (int j = i+1; j < strlen(table); ++j)
-		{
-				if(table[i] == table[j]){
-					exist = 1;
-				}
-		}
-		if(exist == 0){
-			temp[k] = table[i];
-			++k;
-		}
-	}
-	temp[k] = '\0';
-	return temp;
-}
-rules * suivantForOneRule(rules * p,rules * p2,rules * h){
-	if(p->suivant_calculer == 0){
+
+rules * followForOneRule(rules * p,rules * p2,rules * h){
+	if(p->follow_calculer == 0){
         int k = 0;
-		p->suivant_calculer = 1;
+		p->follow_calculer = 1;
 		while(p2 != NULL){
             int max = p2->count;
 			for (int i = 0; i < max; ++i)
@@ -359,16 +359,16 @@ rules * suivantForOneRule(rules * p,rules * p2,rules * h){
 				if(p2->production[i][d] == '\0'){
 					if(strcmp(p->name,p2->name)!=0){
 						if(!isupper(p2->production[i][d-1]) && p2->production[i][d-1] != '\'' ){
-							p->suivant[p->suivant_count] = p2->production[i][d-1];
-							p->suivant_count++;
-							p->suivant[p->suivant_count] = p2->production[i][d-1];
+							p->follow[p->follow_count] = p2->production[i][d-1];
+							p->follow_count++;
+							//p->follow[p->follow_count] = p2->production[i][d-1];
 						}else{
-							rules * temp  = suivantForOneRule(p2,h,h);
-							if(p->suivant[0] == '\0')
-                                strcpy(p->suivant,temp->suivant);
+							rules * temp  = followForOneRule(p2,h,h);
+							if(p->follow[0] == '\0')
+                                strcpy(p->follow,temp->follow);
                             else
-                                strcat(p->suivant,temp->suivant);
-							p->suivant_count = p->suivant_count + strlen(temp->suivant);
+                                strcat(p->follow,temp->follow);
+							p->follow_count = p->follow_count + strlen(temp->follow);
 						}
 					}
 				}else if(d != 0){
@@ -387,24 +387,24 @@ rules * suivantForOneRule(rules * p,rules * p2,rules * h){
 								temp = lookForRule(h,p2->production[i][d]);
 								d++;
 							}
-							if(checkForEpsilon(temp->premier)){
-									strcat(p->suivant,temp->premier);
-									strcpy(p->suivant , removeEpsilon(p->suivant));
-									p->suivant_count = p->suivant_count + temp->premier_count - 1;
+							if(checkForEpsilon(temp->first)){
+									strcat(p->follow,temp->first);
+									strcpy(p->follow , removeEpsilon(p->follow));
+									p->follow_count = p->follow_count + temp->first_count - 1;
 									if(p2->production[i][d]=='\0' && strcmp(temp->name,p2->name)!=0){
-                                            strcat(p->suivant,p2->suivant);
-										p->suivant_count = p->suivant_count + strlen(p2->suivant);
+                                            strcat(p->follow,p2->follow);
+										p->follow_count = p->follow_count + strlen(p2->follow);
 									}
 							}else{
-									strcat(p->suivant,temp->premier);
-									p->suivant_count = p->suivant_count + temp->premier_count;
+									strcat(p->follow,temp->first);
+									p->follow_count = p->follow_count + temp->first_count;
 									break;
 								}
 
 						}else{
-							p->suivant[p->suivant_count] = p2->production[i][d];
-							p->suivant_count++;
-							p->suivant[p->suivant_count] = '\0';
+							p->follow[p->follow_count] = p2->production[i][d];
+							p->follow_count++;
+							p->follow[p->follow_count] = '\0';
 							break;
 						}
 					}
@@ -413,29 +413,29 @@ rules * suivantForOneRule(rules * p,rules * p2,rules * h){
 			}
 			p2 = p2->next;
 		}
-		strcpy(p->suivant,removeDuplicated(p->suivant));
-		p->suivant_count = strlen(p->suivant);
+		strcpy(p->follow,removeDuplicated(p->follow));
+		p->follow_count = strlen(p->follow);
 		return p;
 	}
 	return p;
 }
-rules * suivant(rules * p){
+rules * follow(rules * p){
 	rules * iterator = p;
 	while(iterator!=NULL){
-		iterator = suivantForOneRule(iterator,p,p);
+		iterator = followForOneRule(iterator,p,p);
 		iterator = iterator->next;
 	}
 	return p;
 }
-void printSuivant(rules * p){
+void printfollow(rules * p){
 	while(p !=NULL){
-		printf("Suivant(%s) = {",p->name);
-		for (int i = 0; i < p->suivant_count; ++i)
+		printf("follow(%s) = {",p->name);
+		for (int i = 0; i < p->follow_count; ++i)
 		{
-			if(i == p->suivant_count - 1){
-				printf("%c",p->suivant[i]);
+			if(i == p->follow_count - 1){
+				printf("%c",p->follow[i]);
 			}else{
-				printf("%c,",p->suivant[i]);
+				printf("%c,",p->follow[i]);
 			}
 
 		}
@@ -494,23 +494,23 @@ void insertLL1(LL1 ** table,LL1 * temp){
 LL1 * tableLL1(rules * p, rules * h){
 	LL1 * table = NULL;
 	while(p!=NULL){
-		for (int i = 0; i < p->premier_count; ++i)
+		for (int i = 0; i < p->first_count; ++i)
 		{
-			if(p->premier[i] == '&'){
-				for (int j = 0; j < p->suivant_count; ++j)
+			if(p->first[i] == '&'){
+				for (int j = 0; j < p->follow_count; ++j)
 				{
 					LL1 * temp = malloc(sizeof(LL1));
 					temp->result[0] ='&';
 					strcpy(temp->non_terminal,p->name);
-					temp->terminal = p->suivant[j];
+					temp->terminal = p->follow[j];
 					insertLL1(&table,temp);
 				}
 			}else{
-				int k= find(p,h,p->premier[i]);
+				int k= find(p,h,p->first[i]);
 				LL1 * temp = malloc(sizeof(LL1));
 				strcpy(temp->result ,p->production[k]);
 				strcpy(temp->non_terminal,p->name);
-				temp->terminal = p->premier[i];
+				temp->terminal = p->first[i];
 				insertLL1(&table,temp);
 			}
 		}
@@ -541,7 +541,7 @@ void pop(stack **p){
 		(*p) = (*p)->next;
 		free(temp);
 	}else{
-		printf("stack vide");
+		printf("empty stack");
 	}
 }
 char* peek(stack * p){
@@ -571,54 +571,46 @@ int checkIfvalid(LL1 * table , char * text,rules * prod){
 	strcat(text,"$");
 	push(&p1,"$");
 	push(&p1,prod->name);
-	while(i<strlen(text)-1){
-		char * x = findInLL1(table,peek(p1),text[i]);
-		if(strcmp(x,"0")==0){
-			return 0;
-		}
-		if(strcmp(x,"&")==0){
-			pop(&p1);
-		}else if(strlen(x) >1 ){
-			int d = strlen(x)-1;
-			pop(&p1);
-			while(d>=0){
-				if(x[d] =='\''){
-					char * y = malloc(sizeof(x));
-					y[0] = x[d-1];
-					y[1] = x[d];
-					y[2] = '\0';
-					push(&p1,y);
-					d=d-2;
-				}else{
-					char *f = malloc(2);
-					f[0] = x[d];
-					f[1] = '\0';
-					push(&p1,f);
-					d--;
-				}
-			}
-		}else{
-			pop(&p1);
-			push(&p1,x);
-		}
+	while(i<strlen(text)){
 		char * check = peek(p1);
-		if(strlen(peek(p1))==1){
-			if(check[0] == text[i]){
+		if(check[0] == text[i]){
 				i++;
+				if(check[0] == '$')
+					return 1;
 				pop(&p1);
+		}else{
+		char * x = findInLL1(table,peek(p1),text[i]);
+			if(strcmp(x,"0")==0){
+				return 0;
+			}
+			if(strcmp(x,"&")==0){
+				pop(&p1);
+			}else if(strlen(x) >1 ){
+				int d = strlen(x)-1;
+				pop(&p1);
+				while(d>=0){
+					if(x[d] =='\''){
+						char * y = malloc(sizeof(x));
+						y[0] = x[d-1];
+						y[1] = x[d];
+						y[2] = '\0';
+						push(&p1,y);
+						d=d-2;
+					}else{
+						char *f = malloc(2);
+						f[0] = x[d];
+						f[1] = '\0';
+						push(&p1,f);
+						d--;
+					}
+				}
+			}else{
+				pop(&p1);
+				push(&p1,x);
 			}
 		}
 	}
-	while(strcmp(findInLL1(table,peek(p1),text[i]),"&")==0){
-		pop(&p1);
-		if(strcmp(peek(p1),"$")==0)
-			break;
-	}
-	if(strcmp(peek(p1),"$")!=0){
 		return 0;
-	}else{
-		return 1;
-	}
 
 }
 
@@ -627,39 +619,40 @@ void main(){
 	rules * prod = NULL;
 	rules * prod_with_no_rec = NULL;
 	LL1 * table_LL1 = NULL;
+	printf("enter your grammar : \n");
 	saisie(&prod);
 	printf("\n");
 	printRules(prod);
 	prod_with_no_rec = removeRecursion(prod);
 	printf("\n");
 	printRules(prod_with_no_rec);
-	prod_with_no_rec->suivant[0] ='$';
-	prod_with_no_rec->suivant[1] = '\0';
-	prod_with_no_rec->suivant_count = 1;
-	prod_with_no_rec = premier(prod_with_no_rec);
-	printPremier(prod_with_no_rec);
-	prod_with_no_rec = suivant(prod_with_no_rec);
+	prod_with_no_rec->follow[0] ='$';
+	prod_with_no_rec->follow[1] = '\0';
+	prod_with_no_rec->follow_count = 1;
+	prod_with_no_rec = first(prod_with_no_rec);
+	printfirst(prod_with_no_rec);
+	prod_with_no_rec = follow(prod_with_no_rec);
 	printf("\n");
-	printSuivant(prod_with_no_rec);
+	printfollow(prod_with_no_rec);
 	table_LL1 = tableLL1(prod_with_no_rec,prod_with_no_rec);
 	printf("\n");
-	printf("--table LL1-- \n");
+	printf("--LL1 table-- \n");
 
 	printLL1(table_LL1);
 
 	while(1){
-		printf("entrer un mot pour verifier \n");
+		printf("enter a word to verify \n");
 		scanf("%s",text);
 		if(strcmp(text,".")==0)break;
 
 		int verify = checkIfvalid(table_LL1,text,prod_with_no_rec);
 		switch (verify){
 			case 1:
-				printf("\033[0;32m le mot %s est accepté \n",text);
+				printf("\033[0;32m the word %s is accepted \n",text);
 				printf("\033[0;37m");
 				break;
 			case 0:
-				printf("\033[0;31m le mot %s n'est pas accepté  \n",text);
+				printf("\033[0;31m the %s is rejected  \n",text);
 				printf("\033[0;37m");
 				break;
 		}

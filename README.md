@@ -35,7 +35,7 @@ now we jump to next step wich is verifying a given word matching our production 
 so we type this word for exemple:
 (d+d)\*(d+d)
 
-*note*: non-terminal caracters must be the same as the non-terminals entred in the production rules.
+*note*: non-terminal characters must be the same as the non-terminals entred in the production rules.
 
 for exemple the word ~~(5+5)*5~~  will not be accepted despite it is correct instead you should type (d+d)\*d 
 

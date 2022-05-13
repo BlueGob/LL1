@@ -9,7 +9,7 @@ A small LL1 analyser that can remove recusrsion, calculate the first and follow 
 - epsilon are represented by the character '&'
 ### install and run
 ``` 
-gcc LL1.c -o LL1 
+gcc LL_1_parser.c -o LL1 
 ./LL1
 ``` 
 ### exemple
